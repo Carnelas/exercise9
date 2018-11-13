@@ -52,8 +52,8 @@ app.get("/messages", getMessages);
 
 app.get("/messages/:id/status", getOneMessage);
 
-/* app.get("/version", getVersion);
- */
+app.get("/version", getVersion);
+
 app.use(function(err, req, res, next) {
   console.log(res.body);
   if (err instanceof ValidationError) {
