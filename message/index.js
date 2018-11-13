@@ -12,6 +12,7 @@ const {
 const getMessages = require("./src/controllers/getMessages");
 const getOneMessage = require("./src/controllers/getOneMessage");
 const getStatus = require("./src/clients/getStatus");
+const getVersion = require("./src/clients/getVersion");
 const app = express();
 
 const validator = new Validator({ allErrors: true });
@@ -50,6 +51,8 @@ app.get("/health", getStatus);
 app.get("/messages", getMessages);
 
 app.get("/messages/:id/status", getOneMessage);
+
+app.get("/version", getVersion);
 
 app.use(function(err, req, res, next) {
   console.log(res.body);
