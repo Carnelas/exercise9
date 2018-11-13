@@ -27,7 +27,7 @@ services:
       - 48151:48151
   
   service-v1:
-    build: message/
+    image: exercise9_service-v1:latest
     deploy:
       replicas: 4
     links:
@@ -47,7 +47,7 @@ services:
       - replica_message
       - redis
   service-v2:
-    image: exercise9_service-v2:latest
+    build: message/
     deploy:
       replicas: 4
     links:
