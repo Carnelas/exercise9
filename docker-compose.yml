@@ -1,20 +1,7 @@
 version: "3"
 services:
-  service-v1:
-    build: message/
-    ports:
-      - "9007:9007"
-    links:
-      - messageapp
-      - mongodb_message
-      - replica_message
-      - redis
-      - credit
-    depends_on:
-      - messageapp
-      - mongodb_message
-      - replica_message
-      - redis
+  version: "3"
+services:
   registrator:
     image: gliderlabs/registrator
     volumes:
@@ -28,7 +15,6 @@ services:
   consul: 
     image: consul
     command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetPrivateIP }}'"
-
   balancer:
     image: haproxy:1.8-alpine
     depends_on:
@@ -39,7 +25,48 @@ services:
       - "./etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg"
     ports:
       - 48151:48151
-
+  
+  service-v1:
+    build: message/
+    deploy:
+      replicas: 4
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+      - balancer
+    expose:
+      - "9007"
+    environment:
+      - SERVICE_NAME=service-v1
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  service-v2:
+    build: message/
+    deploy:
+      replicas: 4
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+      - balancer
+    expose:
+      - "9007"
+    environment:
+      - SERVICE_NAME=service-v2
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  
   credit:
     build: credit/
     ports:

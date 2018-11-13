@@ -12,9 +12,7 @@ if (message.payment === true){
 
 
   const postOptions = {
-    // host: "exercise4_messageapp_1",
     host: "messageapp",
-    // host: "localhost",
     port: 3000,
     path: "/message",
     method: "post",
