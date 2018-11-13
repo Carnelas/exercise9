@@ -1,5 +1,51 @@
 version: "3"
 services:
+  message1:
+    build: message/
+    ports:
+      - "9007:9007"
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  message2:
+    build: message/
+    ports:
+      - "9008:9007"
+    links:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+      - credit
+    depends_on:
+      - messageapp
+      - mongodb_message
+      - replica_message
+      - redis
+  credit:
+    build: credit/
+    ports:
+      - "9017:9017"
+    links:
+      - mongodb_credit
+      - replica_credit
+      - redis
+    depends_on:
+      - mongodb_credit
+      - replica_credit
+      - redis
+  messageapp:
+    image: cabify/backend-bootcamp-messageapp
+    ports:
+      - "3000:3000"
   registrator:
     image: gliderlabs/registrator
     volumes:
@@ -9,11 +55,9 @@ services:
       - consul
     links:
       - consul
-  
   consul: 
     image: consul
     command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetPrivateIP }}'"
-
   balancer:
     image: haproxy:1.8-alpine
     depends_on:
@@ -24,4 +68,36 @@ services:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
       - 48151:48151
+  mongodb_credit:
+    image: mongo
+    command: mongod --port 27019    
+    volumes:
+      - ./credit/data/db:/credit/data/db
+    ports:
+      - 27019:27019
+  replica_credit:
+    image: mongo
+    command: mongod --port 27018    
+    volumes:
+      - ./credit/data/replica:/credit/data/replica
+    ports:
+      - 27018:27018
+  mongodb_message:
+    image: mongo
+    command: mongod --port 27027
+    volumes:
+      - ./message/data/db:/message/data/db
+    ports:
+      - 27027:27027
+  replica_message:
+    image: mongo
+    command: mongod --port 27028
+    volumes:
+      - ./message/data/replica:/message/data/replica
+    ports:
+      - 27028:27028
 
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
