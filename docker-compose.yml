@@ -47,7 +47,7 @@ services:
       - replica_message
       - redis
   service-v2:
-    build: message/
+    image: exercise9_service-v2:latest
     deploy:
       replicas: 4
     links:
